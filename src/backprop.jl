@@ -11,7 +11,7 @@ end
 prop(mlp::MLP,x) = prop(mlp.net,x)
 
 # add some 'missing' functionality to ArrayViews
-function setindex!{T}(dst::ContiguousView, src::Array{T}, idx::UnitRange)
+function setindex!(dst::ContiguousView, src::Array{T}, idx::UnitRange) where {T}
 	offs = dst.offset
 	dst.arr[offs+idx.start:offs+idx.stop] = src
 end
@@ -19,11 +19,11 @@ end
 # backpropagation;
 # with memory for gradients pre-allocated.
 # (gradients returned in stor)
-function backprop!{T}(net::Vector{T}, stor::Vector{T}, x, t, inplace)
+function backprop!(net::Vector, stor::Vector, x, t, inplace) #where {T}
 	if length(net) == 0 # Final layer
 		# Error is simply difference with target
 		r = x .- t
-		r[isnan(r)]=0
+		r[isnan.(r)].=0
 		r
 	else # Intermediate layers
 		# current layer
@@ -41,16 +41,16 @@ function backprop!{T}(net::Vector{T}, stor::Vector{T}, x, t, inplace)
 			β  = l.sparsecoef
 			ρ  = l.sparsity
 			pm = vec(mean(y,2))
-			δ += β*((1-ρ)./(1.-pm) - ρ./pm)
+			δ += β*((1-ρ)./(1 .- pm) - ρ./pm)
 		end
 
 		# calculate weight and bias gradients
 		if inplace
 			stor[1].w[:] = vec(δ*x')
-			stor[1].b[:] = sum(δ,2)
+			stor[1].b[:] = sum(δ,dims=2)
 		else
 			stor[1].w    =     δ*x'
-			stor[1].b    = vec(sum(δ,2))
+			stor[1].b    = vec(sum(δ,dims=2))
 		end
 
 		# propagate error
@@ -58,9 +58,9 @@ function backprop!{T}(net::Vector{T}, stor::Vector{T}, x, t, inplace)
 	end
 end
 
-backprop!{T}(net::Vector{T}, stor::Vector{T}, x, t) = backprop!(net, stor, x, t, true)
+backprop!(net::Vector, stor::Vector, x, t)  = backprop!(net, stor, x, t, true) #where {T}
 
-function backprop{T}(net::Vector{T}, x, t)
+function backprop(net::Vector, x, t) #where{T}
 	stor = [copy(l) for l in net]
 	backprop!(net, stor, x, t, false)
 	stor

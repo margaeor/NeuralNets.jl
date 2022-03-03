@@ -16,8 +16,8 @@ end
 function gdmtrain(mlp::MLP,
                   x,
                   t,
-                  x_valid=Void,
-                  t_valid=Void;
+                  x_valid=nothing,
+                  t_valid=nothing;
                   batch_size=size(x,2),
                   maxiter::Int=1000,
                   tol::Real=1e-5,
@@ -26,7 +26,7 @@ function gdmtrain(mlp::MLP,
                   eval::Int=10,
                   show_trace::Bool=false)
 
-    valid = !(x_valid == Void || t_valid == Void) # validation set present?
+    valid = !(isnothing(x_valid) || isnothing(t_valid)) # validation set present?
 
     η, c, m, b = learning_rate, tol, momentum_rate, batch_size
     i = e_old = Δw_old = 0
@@ -40,7 +40,7 @@ function gdmtrain(mlp::MLP,
         i += 1
         x_batch,t_batch = batch(b,x,t)
         ∇ = backprop(mlp.net,x_batch,t_batch)
-        Δw_new = η*∇ .+ m*Δw_old         # calculate Δ weights
+        Δw_new = η*∇ .+ m.*Δw_old         # calculate Δ weights
         mlp.net = mlp.net .- Δw_new      # update weights
         Δw_old = Δw_new
 

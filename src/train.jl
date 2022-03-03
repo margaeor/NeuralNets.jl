@@ -1,4 +1,4 @@
-type TrainReport
+mutable struct TrainReport
     train_error::Vector
     valid_error::Vector
     converged::Bool

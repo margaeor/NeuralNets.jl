@@ -1,6 +1,6 @@
 # Types and function definitions for multi-layer perceptrons
 
-type NNLayer{T}
+mutable struct NNLayer{T} <: Any
     w::AbstractMatrix{T}
     b::AbstractVector{T}
     a::Function
@@ -13,10 +13,10 @@ type NNLayer{T}
 end
 
 # default with no sparsity
-NNLayer{T}(w::AbstractMatrix{T},b::AbstractVector{T},a::Function,ad::Function) =
+NNLayer(w::AbstractMatrix{T},b::AbstractVector{T},a::Function,ad::Function) where{T} =
 	NNLayer(w,b,a,ad,false,0.0,0.0)
 
-type MLP 
+mutable struct MLP 
     net::Vector{NNLayer}
     report::TrainReport
 end
@@ -24,16 +24,16 @@ end
 # In all operations between two NNLayers, the activations functions are taken from the first NNLayer
 copy(l::NNLayer) = NNLayer(l.w,l.b,l.a,l.ad,l.sparse,l.sparsecoef,l.sparsity)
 applylayer(l::NNLayer, x::Array) = l.w*x .+ l.b
-.*(c::Number, l::NNLayer)  = begin l2=copy(l); l2.w=l.w*c;    l2.b=l.b*c;    l2 end
-.*(l::NNLayer, m::NNLayer) = begin l2=copy(l); l2.w=l.w.*m.w; l2.b=l.b.*m.b; l2 end
+*(c::Number, l::NNLayer)  = begin l2=copy(l); l2.w=l.w*c;    l2.b=l.b*c;    l2 end
+*(l::NNLayer, m::NNLayer) = begin l2=copy(l); l2.w=l.w.*m.w; l2.b=l.b.*m.b; l2 end
 *(l::NNLayer, m::NNLayer)  = begin l2=copy(l); l2.w=l.w.*m.w; l2.b=l.b.*m.b; l2 end
 /(l::NNLayer, m::NNLayer)  = begin l2=copy(l); l2.w=l.w./m.w; l2.b=l.b./m.b; l2 end
 ^(l::NNLayer, c::Float64)  = begin l2=copy(l); l2.w=l.w.^c;   l2.b=l.b.^c;   l2 end
 -(l::NNLayer, m::NNLayer)  = begin l2=copy(l); l2.w=l.w.-m.w; l2.b=l.b.-m.b; l2 end
-.-(l::NNLayer, c::Number)  = begin l2=copy(l); l2.w=l.w.-c;   l2.b=l.b.-c;   l2 end
+-(l::NNLayer, c::Number)  = begin l2=copy(l); l2.w=l.w.-c;   l2.b=l.b.-c;   l2 end
 +(l::NNLayer, m::NNLayer)  = begin l2=copy(l); l2.w=l.w+m.w;  l2.b=l.b+m.b;  l2 end
-.+(l::NNLayer, c::Number)  = begin l2=copy(l); l2.w=l.w.+c;   l2.b=l.b.+c;   l2 end
-.+(c::Number, l::NNLayer)  = l .+ c
++(l::NNLayer, c::Number)  = begin l2=copy(l); l2.w=l.w.+c;   l2.b=l.b.+c;   l2 end
++(c::Number, l::NNLayer)  = l .+ c
 
 # generate an MLP autoencoder from existing layer
 function autenc(::Type{MLP}, l::NNLayer, act, actd)

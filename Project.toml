@@ -1,0 +1,9 @@
+name = "NeuralNets"
+uuid = "a1b3ecc0-a763-4fca-8965-7d0d765444cb"
+
+
+[deps]
+ArrayViews = "268e34f8-cc7d-4112-bf3a-0d45b12e3d15"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Optim = "429524aa-4258-5aef-a3af-852621145aeb"

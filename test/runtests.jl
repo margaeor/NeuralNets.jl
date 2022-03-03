@@ -1,4 +1,4 @@
-using .NeuralNets
+using NeuralNets
 
 # xor training data
 x = [

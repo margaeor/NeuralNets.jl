@@ -2,19 +2,20 @@ module NeuralNets
 
 using Optim
 using ArrayViews
+using LinearAlgebra
 
 import Optim:levenberg_marquardt
 import Base: show
 
 # Not importing these results in warnings
-import Base:.*
-import Base:*
-import Base:/
-import Base:^
-import Base:-
-import Base:.-
-import Base:+
-import Base:.+
+import Base.:.*
+import Base.:*
+import Base.:/
+import Base.:^
+import Base.:-
+import Base.:.-
+import Base.:+
+import Base.:.+
 import Base:setindex!
 
 
