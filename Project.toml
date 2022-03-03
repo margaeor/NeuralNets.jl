@@ -1,6 +1,7 @@
 name = "NeuralNets"
 uuid = "a1b3ecc0-a763-4fca-8965-7d0d765444cb"
-
+authors = []
+version = "1.1"
 
 [deps]
 ArrayViews = "268e34f8-cc7d-4112-bf3a-0d45b12e3d15"

@@ -21,7 +21,7 @@ function gdmtrain(mlp::MLP,
                   batch_size=size(x,2),
                   maxiter::Int=1000,
                   tol::Real=1e-5,
-                  learning_rate=.3,
+                  learning_rate=.03,
                   momentum_rate=.6,
                   eval::Int=10,
                   show_trace::Bool=false)
